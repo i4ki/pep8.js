@@ -10,6 +10,11 @@ var fs = require("fs");
 var INDENT_REGEX = /([ \t]*)/;
 var INDENT_CHAR = ' ';
 
+function noqa(line) {
+    "use strict";
+    return line.indexOf("# noqa") !== -1;
+}
+
 /**
  * Never mix tabs and spaces.
  *
@@ -156,6 +161,35 @@ function missing_newline(physical_line) {
     return {};
 }
 
+/**
+ * Limit all lines to a maximum of 79 characters.
+ *
+ * There are still many devices around that are limited to 80 character
+ * lines; plus, limiting windows to 80 characters makes it possible to have
+ * several windows side-by-side.  The default wrapping on such devices looks
+ * ugly.  Therefore, please limit all lines to a maximum of 79 characters.
+ * For flowing long blocks of text (docstrings or comments), limiting the
+ * length to 72 characters is recommended.
+ *
+ * Reports error E501.
+ */
+function maximum_line_length(physical_line, max_line_length) {
+    "use strict";
+    
+    var line    = physical_line.replace(/[\r\n]*$/g, ""),
+        length  = line.length;
+    
+    if (length > max_line_length && !noqa(line)) {
+        return {
+            offset: max_line_length,
+            message: "E501 line too long (" +
+                    length + " > " + max_line_length + " characters)"
+        };
+    }
+    
+    return {};
+}
+
 if (0) {
     fs.readFile("./test.py", "utf8", function (err, data) {
         "use strict";
@@ -171,7 +205,10 @@ if (0) {
     });
 }
 
+exports.noqa = noqa;
 exports.tabs_or_space = tabs_or_spaces;
 exports.tabs_obsolete = tabs_obsolete;
 exports.trailing_whitespace = trailing_whitespace;
 exports.trailing_blank_lines = trailing_blank_lines;
+exports.missing_newline = missing_newline;
+exports.maximum_line_length = maximum_line_length;
