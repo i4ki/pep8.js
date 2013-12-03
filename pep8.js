@@ -26,24 +26,24 @@ var INDENT_CHAR = ' ';
 function tabs_or_spaces(physical_line, indent_char) {
     "use strict";
     var idx_space,
-		idx_tab,
+        idx_tab,
         result = physical_line.match(INDENT_REGEX);
-
-	if (result.length > 0) {
-		result = result[0];
-		
-		idx_space = result.indexOf(indent_char);
-		idx_tab = result.indexOf("\t");
-		
+    
+    if (result.length > 0) {
+        result = result[0];
+        
+        idx_space = result.indexOf(indent_char);
+        idx_tab = result.indexOf("\t");
+        
         if (idx_space !== -1 &&
-				idx_tab !== -1) {
+                idx_tab !== -1) {
             return {
-				offset: idx_tab + 1,
-				message: "E101 indentation contains mixed spaces and tabs"
+                offset: idx_tab + 1,
+                message: "E101 indentation contains mixed spaces and tabs"
             };
-		}
-	}
-	
+        }
+    }
+    
     return {};
 }
 
@@ -55,24 +55,24 @@ function tabs_or_spaces(physical_line, indent_char) {
  * W191: if True:\n\treturn
  */
 function tabs_obsolete(physical_line) {
-	"use strict";
-	var	result = physical_line.match(INDENT_REGEX),
-		i,
+    "use strict";
+    var	result = physical_line.match(INDENT_REGEX),
+        i,
         idx;
     
-	if (result.length > 0) {
-		result = result[0];
-		
-		idx = result.indexOf("\t");
+    if (result.length > 0) {
+        result = result[0];
+        
+        idx = result.indexOf("\t");
         if (idx !== -1) {
             return {
-				offset: idx + 1,
-				message: "W191 indentation contains tabs"
+                offset: idx + 1,
+                message: "W191 indentation contains tabs"
             };
         }
     }
-	
-	return {};
+    
+    return {};
 }
 /**
  * JCR: Trailing whitespace is superfluous.
@@ -157,18 +157,18 @@ function missing_newline(physical_line) {
 }
 
 if (0) {
-fs.readFile("./test.py", "utf8", function (err, data) {
-    "use strict";
-    
-    var lines = data.split("\n"),
-        i;
-    
-    for (i = 0; i < lines.length; i += 1) {
-        console.log(tabs_or_spaces(lines[i], " "));
-        console.log(tabs_obsolete(lines[i]));
-        console.log(trailing_whitespace(lines[i]));
-    }
-});
+    fs.readFile("./test.py", "utf8", function (err, data) {
+        "use strict";
+        
+        var lines = data.split("\n"),
+            i;
+        
+        for (i = 0; i < lines.length; i += 1) {
+            console.log(tabs_or_spaces(lines[i], " "));
+            console.log(tabs_obsolete(lines[i]));
+            console.log(trailing_whitespace(lines[i]));
+        }
+    });
 }
 
 exports.tabs_or_space = tabs_or_spaces;
